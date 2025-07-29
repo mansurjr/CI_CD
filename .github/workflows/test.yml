@@ -1,12 +1,17 @@
 name: Check
-on: push
+
+on: 
+  push:
+
 jobs:
   lint:
-    runs-on: ubuntu 22.04
+    runs-on: ubuntu-22.04
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
-      - name: Install
-        run: ci
-      - name: Lint Check
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Lint
         run: npm run lint
