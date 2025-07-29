@@ -5,7 +5,7 @@ on:
 
 jobs:
   lint:
-    runs-on: ubuntu-22.04
+    runs-on: self-hosted
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -18,7 +18,7 @@ jobs:
 
   test:
     needs: [lint]
-    runs-on: ubuntu-22.04
+    runs-on: self-hosted
     strategy: 
       matrix:
         node-version: [20, idwenj, 93]
