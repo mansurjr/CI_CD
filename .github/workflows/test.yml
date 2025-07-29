@@ -21,7 +21,7 @@ jobs:
     runs-on: self-hosted
     strategy: 
       matrix:
-        node-version: [20, idwenj, 93]
+        node-version: [20, 21, 19]
 
     steps:
       - name: Checkout code
