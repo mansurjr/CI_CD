@@ -15,16 +15,28 @@ jobs:
 
       - name: Run Lint
         run: npm run lint
+
   test:
+    needs: [lint]
     runs-on: ubuntu-22.04
+    strategy: 
+      matrix:
+        node-version: [20, 21, 22]
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix['node-version'] }}
+          cache: 'npm'
+
       - name: Install dependencies
         run: npm i
 
-      - name: Test Check
+      - name: Run Tests
         env:
           PORT: ${{ secrets.PORT }}
         run: npm run test
