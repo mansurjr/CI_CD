@@ -22,19 +22,31 @@ jobs:
           ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
 
           ssh -i ~/.ssh/id_rsa ${{ secrets.USERNAME }}@${{ secrets.HOST }} << 'EOF'
-            cd /home/ubuntu/your-app-folder
+            cd ~
+            APP_DIR="ci_cd_app"
 
-            if [ -f CI_CD ]; then
-              echo "CI_CD file exists. Pulling latest changes..."
-              git pull origin main
-              npm install
-              pm2 restart CI_CD
+            if [ -d "$APP_DIR" ]; then
+              echo "Folder exists. Updating..."
+              cd "$APP_DIR"
+              if [ -f CI_CD ]; then
+                git pull origin main
+                npm install
+                pm2 restart CI_CD
+              else
+                npm install
+                npm run build
+                echo "PORT=3000" > .env
+                pm2 start dist/main.js --name CI_CD
+                touch CI_CD
+              fi
             else
-              echo "CI_CD file not found. Fresh setup..."
-              git clone https://github.com/mansurjr/CI_CD.git .
+              echo "Folder does not exist. Cloning..."
+              git clone https://github.com/mansurjr/CI_CD.git "$APP_DIR"
+              cd "$APP_DIR"
               npm install
               npm run build
               echo "PORT=3000" > .env
-              pm2 start dist/main.js  # or your entry file
+              pm2 start dist/main.js --name CI_CD
+              touch CI_CD
             fi
           EOF
